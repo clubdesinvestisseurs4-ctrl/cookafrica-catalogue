@@ -1,0 +1,29 @@
+{
+  "name": "catalogue-cookafrica-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "prep:images": "node scripts/optimize-images.mjs",
+    "prep:icons": "node scripts/generate-icons.mjs",
+    "prep:pdf": "node scripts/build-pdf.mjs",
+    "prep:qr": "node scripts/generate-qr.mjs",
+    "prebuild": "npm run prep:images && npm run prep:icons && npm run prep:pdf"
+  },
+  "dependencies": {
+    "vue": "^3.4.27",
+    "page-flip": "^2.0.7"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "vite": "^5.2.11",
+    "vite-plugin-pwa": "^0.20.0",
+    "sharp": "^0.33.4",
+    "pdf-lib": "^1.17.1",
+    "qrcode": "^1.5.3"
+  }
+}
