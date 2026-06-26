@@ -12,7 +12,7 @@
     "prep:icons": "node scripts/generate-icons.mjs",
     "prep:pdf": "node scripts/build-pdf.mjs",
     "prep:qr": "node scripts/generate-qr.mjs",
-    "prebuild": "npm run prep:images && npm run prep:icons && npm run prep:pdf"
+    "prep": "npm run prep:images && npm run prep:icons && npm run prep:pdf"
   },
   "dependencies": {
     "vue": "^3.4.27",

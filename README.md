@@ -56,12 +56,16 @@ correspondance fichier → page est définie dans `frontend/scripts/image-map.mj
 2. Régénérez les pages optimisées, les icônes et le PDF :
    ```bash
    cd frontend
-   npm run prep:images
-   npm run prep:pdf
+   npm run prep
    ```
+   > ⚠️ Ces scripts lisent les fichiers sources depuis `C:\Users\abayi\MENU\` (votre machine). Ils
+   > ne sont **pas** exécutés automatiquement au build (Vercel n'a pas accès à ce dossier) — c'est
+   > pour ça qu'il faut les lancer en local puis committer les fichiers générés
+   > (`public/assets/pages/`, `public/icons/`, `public/catalogue-cookafrica.pdf`).
 3. Si le texte des plats a changé, mettez aussi à jour `frontend/src/data/catalog.js`
    (et, si le backend est en service, republiez via `npm run seed` côté backend — voir §3.4).
-4. Commitez et poussez : Vercel redéploie automatiquement (§4).
+4. Commitez **et ajoutez les fichiers générés** (`git add public/`), puis poussez : Vercel
+   redéploie automatiquement (§4).
 
 ---
 
