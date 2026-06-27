@@ -1,5 +1,6 @@
 const express = require('express');
 const { db } = require('../firebase-admin');
+const { requireRole } = require('../lib/auth');
 
 const router = express.Router();
 const DOC_PATH = ['catalog', 'current'];
@@ -21,7 +22,7 @@ router.get('/', async (req, res) => {
 
 // PUT /api/catalog — remplace le catalogue (admin uniquement, jeton requis)
 // Permet de modifier le menu (ordre des pages, textes, images) sans redéployer le frontend.
-router.put('/', requireAdmin, async (req, res) => {
+router.put('/', requireRole('admin'), async (req, res) => {
   try {
     const body = req.body;
     if (!body || !Array.isArray(body.pages)) {
@@ -34,13 +35,5 @@ router.put('/', requireAdmin, async (req, res) => {
     res.status(500).json({ error: 'Erreur lors de la mise à jour du catalogue.' });
   }
 });
-
-function requireAdmin(req, res, next) {
-  const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
-  if (!process.env.ADMIN_TOKEN || token !== process.env.ADMIN_TOKEN) {
-    return res.status(401).json({ error: 'Non autorisé.' });
-  }
-  next();
-}
 
 module.exports = router;

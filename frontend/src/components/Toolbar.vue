@@ -21,7 +21,7 @@
     <div class="actions">
       <span class="page-indicator">{{ total ? current + 1 : 0 }} / {{ total }}</span>
       <a class="icon-btn" :href="pdfHref" download title="Télécharger en PDF" aria-label="Télécharger le catalogue en PDF">⬇</a>
-      <button class="icon-btn" @click="$emit('help')" title="Comment feuilleter ?" aria-label="Aide">?</button>
+      <button class="icon-btn" @click="$emit('help')" title="Voir ma réduction" aria-label="Voir ma réduction">🎟</button>
       <button class="icon-btn" @click="toggleFullscreen" title="Plein écran" aria-label="Plein écran">⛶</button>
     </div>
   </header>

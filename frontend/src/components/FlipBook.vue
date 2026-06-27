@@ -8,7 +8,9 @@
         :data-density="isHardCover(page) ? 'hard' : 'soft'"
       >
         <div class="page-content">
+          <LeadFormPage v-if="page.kind === 'lead-form'" />
           <img
+            v-else
             :src="resolveImage(page.image)"
             :alt="page.alt || page.dayLabel || 'Page du catalogue Cook Africa'"
             loading="eager"
@@ -29,6 +31,7 @@
 import { ref, onMounted, onBeforeUnmount, nextTick, watch } from 'vue';
 import { PageFlip } from 'page-flip';
 import { resolveImage } from '../composables/useCatalog.js';
+import LeadFormPage from './LeadFormPage.vue';
 
 const props = defineProps({
   pages: { type: Array, required: true }
@@ -65,7 +68,9 @@ async function init() {
     usePortrait: true,
     autoSize: true,
     showPageCorners: true,
-    disableFlipByClick: false,
+    // true : seul le coin de page déclenche le tournage, pas un clic n'importe où —
+    // indispensable pour pouvoir cliquer dans les champs du formulaire en dernière page.
+    disableFlipByClick: true,
     mobileScrollSupport: false
   });
 
