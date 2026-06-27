@@ -253,12 +253,15 @@ sur `main` qui touche `backend/**`. Vous pouvez aussi le lancer manuellement dep
 **Actions** du dépôt GitHub (« Run workflow »).
 
 Une fois le déploiement terminé, récupérez l'URL du service (visible dans les logs du workflow,
-ou via `gcloud run services describe catalogue-cookafrica-api --region europe-west1 --format='value(status.url)'`)
+ou via `gcloud run services describe catalogue-cookafrica-api --region us-central1 --format='value(status.url)'`)
 → c'est la valeur de `VITE_API_URL_FALLBACK` sur Vercel (§4).
 
 > **Coût** : Cloud Run facture à l'usage avec un palier gratuit mensuel généreux (2 millions de
-> requêtes, 360 000 Gio-s de mémoire). `--min-instances=0` (déjà dans le workflow) garantit qu'on
-> ne paie rien en l'absence de trafic.
+> requêtes, 360 000 Gio-s de mémoire, 180 000 vCPU-s). `--min-instances=0` (déjà dans le workflow)
+> garantit qu'on ne paie rien en l'absence de trafic. **Important** : ce palier gratuit n'est
+> applicable que dans 3 régions précises — `us-central1`, `us-east1`, `us-west1` (d'où le choix de
+> `us-central1` ici). Déployer dans une autre région (ex. `europe-west1`) fonctionne très bien mais
+> sort du palier gratuit et facture dès la première requête.
 
 ---
 
@@ -323,3 +326,15 @@ Génère :
   auth, fiches) essaie `VITE_API_URL` puis, en cas d'échec réseau ou d'erreur 5xx, retente sur
   `VITE_API_URL_FALLBACK`, avant d'abandonner (ou de retomber sur les données embarquées pour le
   catalogue).
+
+
+
+Mot de passe admin : gn8iW5xSZTKsoUWl (pour /admin/login)
+
+Comment utiliser le catalogue une fois le frontend sur Vercel :
+
+Clients (scan QR) : pop-up de réduction au premier chargement → bouton « Télécharger mon coupon » (-15%, valable 5 jours). Puis ils feuillettent le menu (glisser le coin de page, flèches ←/→, ou le sélecteur de jour dans la barre d'outils), peuvent télécharger le PDF complet, et remplir une fiche de contact facultative en dernière page.
+Chefs promoteurs : <votre-url-vercel>/promoteur/login — connexion avec l'identifiant/mot de passe que vous leur créez depuis le dashboard admin (voir ci-dessous). Ils remplissent une fiche par client rencontré ; le formulaire se réinitialise après chaque envoi.
+Vous (admin) : <votre-url-vercel>/admin/login avec gn8iW5xSZTKsoUWl →
+onglet Chefs promoteurs : créer un compte (identifiant + nom + mot de passe), désactiver/réactiver, réinitialiser un mot de passe.
+onglet Fiches clients : toutes les fiches collectées (promoteurs + soumissions publiques), filtrables par promoteur, exportables en CSV.

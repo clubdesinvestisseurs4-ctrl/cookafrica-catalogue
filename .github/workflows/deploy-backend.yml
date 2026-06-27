@@ -9,7 +9,7 @@ on:
   workflow_dispatch: {}
 
 env:
-  REGION: europe-west1
+  REGION: us-central1 # région éligible au palier "Always Free" de Cloud Run (avec us-east1/us-west1)
   SERVICE: catalogue-cookafrica-api
 
 jobs:
