@@ -8,7 +8,12 @@
         :data-density="isHardCover(page) ? 'hard' : 'soft'"
       >
         <div class="page-content">
-          <LeadFormPage v-if="page.kind === 'lead-form'" />
+          <div v-if="page.kind === 'lead-form-cta'" class="cta-page">
+            <span class="cta-icon" aria-hidden="true">📋</span>
+            <h2>Restons en contact</h2>
+            <p>Laissez vos coordonnées et recevez nos prochaines offres.</p>
+            <button type="button" class="cta-btn" @click="$emit('open-lead-form')">Remplir la fiche</button>
+          </div>
           <img
             v-else
             :src="resolveImage(page.image)"
@@ -31,12 +36,11 @@
 import { ref, onMounted, onBeforeUnmount, nextTick, watch } from 'vue';
 import { PageFlip } from 'page-flip';
 import { resolveImage } from '../composables/useCatalog.js';
-import LeadFormPage from './LeadFormPage.vue';
 
 const props = defineProps({
   pages: { type: Array, required: true }
 });
-const emit = defineEmits(['ready', 'flip']);
+const emit = defineEmits(['ready', 'flip', 'open-lead-form']);
 
 const bookEl = ref(null);
 let pageFlip = null;
@@ -68,10 +72,15 @@ async function init() {
     usePortrait: true,
     autoSize: true,
     showPageCorners: true,
-    // true : seul le coin de page déclenche le tournage, pas un clic n'importe où —
-    // indispensable pour pouvoir cliquer dans les champs du formulaire en dernière page.
+    // true : seul le coin de page déclenche le tournage au clic/tap au milieu de la page —
+    // évite de tourner la page par erreur en touchant le bouton de la page "Restons en contact".
     disableFlipByClick: true,
-    mobileScrollSupport: false
+    // true (valeur par défaut St.PageFlip) : sur mobile, désactive le scroll natif pendant le
+    // toucher du livre pour que le geste de glissement soit toujours interprété comme un
+    // tournage de page plutôt que comme un défilement de l'écran — sinon le feuilletage tactile
+    // devient peu fiable sur téléphone.
+    mobileScrollSupport: true,
+    swipeDistance: 30
   });
 
   pageFlip.loadFromHTML(bookEl.value.querySelectorAll('.page'));
@@ -135,6 +144,37 @@ onBeforeUnmount(() => {
   -webkit-user-drag: none;
 }
 
+.cta-page {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  background: linear-gradient(180deg, var(--red), var(--red-dark));
+  color: var(--gold-soft);
+}
+
+.cta-icon { font-size: 2.6rem; }
+.cta-page h2 { margin: 0; font-size: 1.3rem; }
+.cta-page p { margin: 0; font-size: 0.9rem; opacity: 0.9; max-width: 280px; }
+
+.cta-btn {
+  margin-top: 0.5rem;
+  background: var(--gold);
+  color: var(--red-dark);
+  border: none;
+  border-radius: 999px;
+  padding: 0.75rem 1.5rem;
+  font-weight: bold;
+  font-size: 0.95rem;
+  min-height: 44px;
+}
+.cta-btn:active { transform: scale(0.97); }
+
 .nav-arrows {
   position: absolute;
   inset: 0;
@@ -167,6 +207,9 @@ onBeforeUnmount(() => {
 
 @media (max-width: 640px) {
   .flipbook { height: min(72vh, 1500px); }
-  .nav-btn { width: 2rem; height: 2rem; font-size: 1.2rem; }
+  /* Cible tactile >= 44px (recommandation accessibilité mobile), un peu plus grande que la
+     simple icône pour rester facile à toucher du pouce. */
+  .nav-btn { width: 2.75rem; height: 2.75rem; font-size: 1.3rem; }
+  .nav-arrows { padding: 0 0.4rem; }
 }
 </style>

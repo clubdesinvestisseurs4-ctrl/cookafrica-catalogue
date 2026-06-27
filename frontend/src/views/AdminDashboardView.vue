@@ -11,9 +11,22 @@
     <nav class="tabs">
       <button :class="{ active: tab === 'promoters' }" @click="tab = 'promoters'">Chefs promoteurs</button>
       <button :class="{ active: tab === 'leads' }" @click="tab = 'leads'">Fiches clients</button>
+      <button :class="{ active: tab === 'coupons' }" @click="tab = 'coupons'">Valider un coupon</button>
     </nav>
 
     <main class="content">
+      <!-- ===== COUPONS ===== -->
+      <section v-if="tab === 'coupons'" class="panel">
+        <form class="create-form" @submit.prevent="redeemCoupon">
+          <h2>Valider un coupon en caisse</h2>
+          <div class="grid">
+            <label><span>Code du coupon</span><input v-model.trim="couponCode" placeholder="CA-XXXXXX" required /></label>
+          </div>
+          <button class="primary" type="submit" :disabled="redeeming">{{ redeeming ? 'Vérification…' : 'Valider' }}</button>
+          <p v-if="couponResult" :class="['result', couponResult.ok ? 'ok' : 'error']">{{ couponResult.message }}</p>
+        </form>
+      </section>
+
       <!-- ===== PROMOTEURS ===== -->
       <section v-if="tab === 'promoters'" class="panel">
         <form class="create-form" @submit.prevent="createPromoter">
@@ -103,6 +116,27 @@ const filterPromoterId = ref('');
 const newPromoter = reactive({ username: '', displayName: '', password: '' });
 const creating = ref(false);
 const createError = ref('');
+
+const couponCode = ref('');
+const redeeming = ref(false);
+const couponResult = ref(null);
+
+async function redeemCoupon() {
+  redeeming.value = true;
+  couponResult.value = null;
+  try {
+    const data = await apiFetch(`/api/coupons/${encodeURIComponent(couponCode.value)}/redeem`, {
+      method: 'POST',
+      token: adminToken.value,
+    });
+    couponResult.value = { ok: true, message: `✓ Coupon validé (${data.offerText}). À ne plus accepter une seconde fois.` };
+    couponCode.value = '';
+  } catch (err) {
+    couponResult.value = { ok: false, message: err.message || 'Erreur lors de la validation.' };
+  } finally {
+    redeeming.value = false;
+  }
+}
 
 const filteredLeads = computed(() => {
   if (!filterPromoterId.value) return leads.value;
@@ -270,6 +304,9 @@ onMounted(() => {
 .primary:disabled { opacity: 0.6; }
 
 .error { color: #9b1c1c; font-size: 0.82rem; }
+.result { margin-top: 0.75rem; font-size: 0.88rem; font-weight: bold; }
+.result.ok { color: #1f7a3a; }
+.result.error { color: #9b1c1c; }
 .muted { color: #8a7a5e; font-size: 0.85rem; padding: 0.5rem 0; }
 
 .data-table {

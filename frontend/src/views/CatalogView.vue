@@ -15,6 +15,7 @@
         ref="flipbookRef"
         :pages="pages"
         @flip="onFlip"
+        @open-lead-form="showLeadForm = true"
       />
       <div v-else class="loading">Chargement du catalogue…</div>
     </main>
@@ -25,6 +26,7 @@
       :phones="contact.phones"
       @close="closeDiscount"
     />
+    <LeadFormModal v-if="showLeadForm" @close="showLeadForm = false" />
   </div>
 </template>
 
@@ -33,19 +35,22 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import FlipBook from '../components/FlipBook.vue';
 import Toolbar from '../components/Toolbar.vue';
 import DiscountPopup from '../components/DiscountPopup.vue';
+import LeadFormModal from '../components/LeadFormModal.vue';
 import { useCatalog } from '../composables/useCatalog.js';
 
 const SEEN_KEY = 'cookafrica_catalog_seen_discount';
 
 const { data } = useCatalog();
 
-// Insère la page "Fiche de renseignements" juste avant la couverture de fin,
-// pour que le formulaire client apparaisse à la fin du catalogue, devant le dos du livre.
+// Insère une page d'appel à l'action "Restons en contact" juste avant la couverture de fin —
+// elle ouvre la fiche de renseignements dans une fenêtre modale (plutôt que des champs de
+// formulaire directement dans la page tournante : St.PageFlip ne transmet les clics qu'aux
+// liens/boutons, pas aux champs de saisie, ce qui rendrait le formulaire inutilisable au toucher).
 const pages = computed(() => {
   const base = data.value?.pages || [];
   if (!base.length) return [];
   const last = base[base.length - 1];
-  return [...base.slice(0, -1), { id: 'lead-form', kind: 'lead-form' }, last];
+  return [...base.slice(0, -1), { id: 'lead-form', kind: 'lead-form-cta' }, last];
 });
 
 const contact = computed(() => data.value?.contact || {});
@@ -59,6 +64,7 @@ const dayChips = computed(() =>
 const flipbookRef = ref(null);
 const currentPage = ref(0);
 const showDiscount = ref(false);
+const showLeadForm = ref(false);
 
 const currentDayLabel = computed(() => {
   const p = pages.value[currentPage.value];
@@ -66,7 +72,7 @@ const currentDayLabel = computed(() => {
   if (p.dayLabel) return `${p.dayLabel} — ${p.theme || ''}`.trim().replace(/—\s*$/, '');
   if (p.kind === 'cover-start') return 'Couverture';
   if (p.kind === 'cover-end') return 'Contacts & occasions';
-  if (p.kind === 'lead-form') return 'Restez en contact';
+  if (p.kind === 'lead-form-cta') return 'Restez en contact';
   return '';
 });
 

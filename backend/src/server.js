@@ -7,6 +7,7 @@ const catalogRouter = require('./routes/catalog');
 const authRouter = require('./routes/auth');
 const promotersRouter = require('./routes/promoters');
 const leadsRouter = require('./routes/leads');
+const couponsRouter = require('./routes/coupons');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -31,6 +32,7 @@ app.use('/api/catalog', catalogRouter);
 app.use('/api/auth', authLimiter, authRouter);
 app.use('/api/promoters', promotersRouter);
 app.use('/api/leads', leadsRouter);
+app.use('/api/coupons', couponsRouter);
 
 app.use((req, res) => res.status(404).json({ error: 'Not found' }));
 

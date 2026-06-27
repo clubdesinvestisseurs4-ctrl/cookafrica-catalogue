@@ -1,4 +1,40 @@
 // Génère le visuel du coupon de réduction (canvas) aux couleurs Cook Africa, et son téléchargement.
+import { apiFetch } from './useAuth.js';
+
+const STORAGE_KEY = 'cookafrica_coupon_v1';
+
+// Récupère le coupon de ce visiteur depuis le backend (code + échéance fixés une fois pour
+// toutes et tracés en base, pour pouvoir être validés une seule fois en caisse) — ou réutilise
+// celui déjà stocké localement tant qu'il n'est pas expiré, pour que rouvrir le pop-up
+// n'en régénère pas un nouveau à chaque fois.
+export async function getOrCreateCoupon() {
+  const cached = readCached();
+  if (cached && new Date(cached.expiresAt) > new Date()) return cached;
+
+  try {
+    const { code, issuedAt, expiresAt } = await apiFetch('/api/coupons', { method: 'POST' });
+    const coupon = { code, issuedAt, expiresAt };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(coupon));
+    return coupon;
+  } catch (err) {
+    // Backends indisponibles : on dégrade sur un coupon local non vérifiable en caisse,
+    // plutôt que de bloquer l'affichage de l'offre.
+    const issuedAt = new Date();
+    const expiresAt = new Date(issuedAt.getTime() + 5 * 24 * 60 * 60 * 1000);
+    const coupon = { code: generateCouponCode(), issuedAt: issuedAt.toISOString(), expiresAt: expiresAt.toISOString() };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(coupon));
+    return coupon;
+  }
+}
+
+function readCached() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
 
 const RED = '#7a0e0e';
 const RED_DARK = '#4a0808';

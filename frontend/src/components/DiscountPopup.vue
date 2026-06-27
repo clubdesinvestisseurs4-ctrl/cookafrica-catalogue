@@ -6,17 +6,18 @@
       <h2>Une réduction pour vous !</h2>
       <p class="sub">Téléchargez votre coupon et venez en profiter au restaurant.</p>
 
-      <canvas ref="canvasEl" class="coupon-canvas"></canvas>
+      <canvas v-if="ready" ref="canvasEl" class="coupon-canvas"></canvas>
+      <p v-else class="sub">Préparation de votre coupon…</p>
 
-      <button class="cta" @click="download">⬇ Télécharger mon coupon</button>
+      <button class="cta" :disabled="!ready" @click="download">⬇ Télécharger mon coupon</button>
       <button class="ghost" @click="close">Continuer vers le catalogue</button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
-import { drawCoupon, downloadCanvas, formatDateFR, generateCouponCode } from '../composables/useCoupon.js';
+import { onMounted, nextTick, ref } from 'vue';
+import { getOrCreateCoupon, drawCoupon, downloadCanvas, formatDateFR } from '../composables/useCoupon.js';
 
 const props = defineProps({
   offerText: { type: String, default: "-15% sur l'addition" },
@@ -26,15 +27,17 @@ const props = defineProps({
 const emit = defineEmits(['close']);
 
 const canvasEl = ref(null);
+const ready = ref(false);
 let code = '';
 
-onMounted(() => {
-  const validUntil = new Date();
-  validUntil.setDate(validUntil.getDate() + 5);
-  code = generateCouponCode();
+onMounted(async () => {
+  const coupon = await getOrCreateCoupon();
+  code = coupon.code;
+  ready.value = true;
+  await nextTick();
   drawCoupon(canvasEl.value, {
     offerText: props.offerText,
-    validUntilLabel: formatDateFR(validUntil),
+    validUntilLabel: formatDateFR(new Date(coupon.expiresAt)),
     code,
     address: props.address,
     phones: props.phones
@@ -115,6 +118,7 @@ h2 { margin: 0.35rem 0 0.4rem; font-size: 1.2rem; color: var(--red-dark); }
   margin-bottom: 0.6rem;
 }
 .cta:hover { background: var(--red-dark); }
+.cta:disabled { opacity: 0.6; }
 
 .ghost {
   display: block;
