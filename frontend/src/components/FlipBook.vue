@@ -72,9 +72,11 @@ async function init() {
     usePortrait: true,
     autoSize: true,
     showPageCorners: true,
-    // true : seul le coin de page déclenche le tournage au clic/tap au milieu de la page —
-    // évite de tourner la page par erreur en touchant le bouton de la page "Restons en contact".
-    disableFlipByClick: true,
+    // false : on peut tourner la page en swipant/cliquant n'importe où, pas seulement le coin —
+    // plus naturel au doigt sur mobile. Sans risque pour le bouton de la page "Restons en
+    // contact" : St.PageFlip transmet toujours les clics aux <button>/<a> (clickEventForward),
+    // qui ouvrent la fenêtre du formulaire au lieu de déclencher un tournage de page.
+    disableFlipByClick: false,
     // true (valeur par défaut St.PageFlip) : sur mobile, désactive le scroll natif pendant le
     // toucher du livre pour que le geste de glissement soit toujours interprété comme un
     // tournage de page plutôt que comme un défilement de l'écran — sinon le feuilletage tactile
