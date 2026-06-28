@@ -1,6 +1,6 @@
 <template>
-  <div class="flipbook-wrap">
-    <div ref="bookEl" class="flipbook">
+  <div ref="wrapEl" class="flipbook-wrap">
+    <div ref="bookEl" class="flipbook" :style="bookStyle">
       <div
         v-for="page in pages"
         :key="page.id"
@@ -42,8 +42,17 @@ const props = defineProps({
 });
 const emit = defineEmits(['ready', 'flip', 'open-lead-form']);
 
+const wrapEl = ref(null);
 const bookEl = ref(null);
+const bookStyle = ref({});
 let pageFlip = null;
+let resizeObserver = null;
+
+// Ratio réel des pages (853x1280). On mesure l'espace disponible directement en pixels via le
+// DOM plutôt qu'avec des unités CSS vh/vw : sur un vrai navigateur mobile, la barre d'adresse qui
+// apparaît/disparaît fausse le calcul de vh, ce qu'un calcul JS basé sur clientWidth/clientHeight
+// n'a pas (il mesure l'espace réellement rendu, peu importe le moteur du navigateur).
+const PAGE_RATIO = 853 / 1280;
 
 function isHardCover(page) {
   return page.kind === 'cover-start' || page.kind === 'cover-end';
@@ -55,18 +64,47 @@ function goTo(index) { pageFlip?.flip(index); }
 
 defineExpose({ goTo, next, prev });
 
+function measure() {
+  if (!wrapEl.value) return null;
+  const cw = wrapEl.value.clientWidth;
+  const ch = wrapEl.value.clientHeight;
+  if (!cw || !ch) return null;
+
+  let width = cw;
+  let height = Math.round(width / PAGE_RATIO);
+  if (height > ch) {
+    height = ch;
+    width = Math.round(height * PAGE_RATIO);
+  }
+  return { width: Math.max(width, 1), height: Math.max(height, 1) };
+}
+
+function applySize() {
+  const size = measure();
+  if (!size) return;
+  bookStyle.value = { width: `${size.width}px`, height: `${size.height}px` };
+  return size;
+}
+
 async function init() {
   await nextTick();
-  if (!bookEl.value || !props.pages.length) return;
+  if (!bookEl.value || !wrapEl.value || !props.pages.length) return;
+
+  const size = applySize() || { width: 520, height: 780 };
+  await nextTick();
 
   pageFlip = new PageFlip(bookEl.value, {
-    width: 520,
-    height: 780,
+    width: size.width,
+    height: size.height,
     size: 'stretch',
-    minWidth: 260,
-    maxWidth: 1300,
-    minHeight: 380,
-    maxHeight: 1850,
+    // minWidth = maxWidth et minHeight = maxHeight (= la taille déjà calculée pour le bon
+    // ratio) : sans cette contrainte stricte, St.PageFlip a la possibilité de décider que la
+    // largeur autorisée laisse la place à un mode "paysage" deux-pages et rend le livre à moitié
+    // de la hauteur prévue, même en mode portrait sur un écran de téléphone étroit.
+    minWidth: size.width,
+    maxWidth: size.width,
+    minHeight: size.height,
+    maxHeight: size.height,
     maxShadowOpacity: 0.55,
     showCover: true,
     usePortrait: true,
@@ -90,7 +128,21 @@ async function init() {
   emit('ready', pageFlip);
 }
 
-onMounted(init);
+let resizeTimer = null;
+function onWrapResize() {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(applySize, 80);
+}
+
+onMounted(() => {
+  init();
+  if (window.ResizeObserver && wrapEl.value) {
+    resizeObserver = new ResizeObserver(onWrapResize);
+    resizeObserver.observe(wrapEl.value);
+  } else {
+    window.addEventListener('resize', onWrapResize);
+  }
+});
 
 watch(() => props.pages, async (next, prevPages) => {
   if (!prevPages?.length && next?.length) {
@@ -103,6 +155,9 @@ watch(() => props.pages, async (next, prevPages) => {
 onBeforeUnmount(() => {
   pageFlip?.destroy();
   pageFlip = null;
+  resizeObserver?.disconnect();
+  window.removeEventListener('resize', onWrapResize);
+  clearTimeout(resizeTimer);
 });
 </script>
 
@@ -119,12 +174,10 @@ onBeforeUnmount(() => {
 }
 
 .flipbook {
-  /* Les pages font 853x1280 (ratio ≈ 0.666). St.PageFlip conserve ce ratio et centre le livre
-     dans sa boîte : si la boîte n'a pas exactement ce ratio, ça laisse de grands espaces vides
-     autour. Les deux formules ci-dessous sont calculées pour que largeur et hauteur restent
-     toujours proportionnelles à 853:1280, quelle que soit la forme de l'écran. */
-  width: min(98vw, 58.64vh, 1166px);
-  height: min(88vh, 147.06vw, 1750px);
+  /* Largeur/hauteur fixées dynamiquement en JS (voir bookStyle), à partir de la taille réelle
+     mesurée de .flipbook-wrap — plus fiable que des unités CSS vh/vw, qui sont faussées sur les
+     vrais navigateurs mobiles par l'apparition/disparition de la barre d'adresse. */
+  flex-shrink: 0;
 }
 
 .page {
@@ -212,10 +265,6 @@ onBeforeUnmount(() => {
 .nav-btn:active { transform: scale(0.95); }
 
 @media (max-width: 640px) {
-  .flipbook {
-    width: min(98vw, 56.64vh);
-    height: min(85vh, 147.06vw, 1500px);
-  }
   /* Cible tactile >= 44px (recommandation accessibilité mobile), un peu plus grande que la
      simple icône pour rester facile à toucher du pouce. */
   .nav-btn { width: 2.75rem; height: 2.75rem; font-size: 1.3rem; }
