@@ -1,7 +1,7 @@
 <template>
   <div class="fiche">
     <div class="fiche-header">
-      <span class="logo-mark">CA</span>
+      <img class="logo-mark" src="/assets/logo-cookafrica.jpeg" alt="Cook Africa" />
       <h2>Fiche de<br />Renseignements</h2>
     </div>
 
@@ -114,16 +114,13 @@ async function submit() {
 }
 
 .logo-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
   width: 2.4rem;
   height: 2.4rem;
   flex-shrink: 0;
+  object-fit: cover;
   border: 2px solid var(--gold);
-  border-radius: 50%;
-  font-weight: bold;
-  color: var(--gold);
+  border-radius: 0.5rem;
 }
 
 .fiche-header h2 {

@@ -2,7 +2,7 @@
   <div class="shell">
     <header class="bar">
       <div class="who">
-        <span class="logo-mark">CA</span>
+        <img class="logo-mark" src="/assets/logo-cookafrica.jpeg" alt="Cook Africa" />
         <strong>Dashboard admin — Cook Africa</strong>
       </div>
       <button class="logout" @click="logout">Déconnexion</button>
@@ -255,9 +255,11 @@ onMounted(() => {
 }
 .who { display: flex; align-items: center; gap: 0.6rem; color: var(--gold-soft); }
 .logo-mark {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 2.2rem; height: 2.2rem; border: 1.5px solid var(--gold); border-radius: 50%;
-  color: var(--gold); font-weight: bold; flex-shrink: 0;
+  display: block;
+  width: 2.4rem; height: 2.4rem;
+  object-fit: cover;
+  border: 1.5px solid var(--gold); border-radius: 0.45rem;
+  flex-shrink: 0;
 }
 .logout {
   background: transparent; border: 1px solid var(--gold); color: var(--gold-soft);

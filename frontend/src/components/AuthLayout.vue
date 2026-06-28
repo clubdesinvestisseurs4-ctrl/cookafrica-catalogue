@@ -1,7 +1,7 @@
 <template>
   <div class="auth-shell">
     <div class="auth-card">
-      <span class="logo-mark">CA</span>
+      <img class="logo-mark" src="/assets/logo-cookafrica.jpeg" alt="Cook Africa" />
       <h1>{{ title }}</h1>
       <slot />
     </div>
@@ -40,17 +40,13 @@ defineProps({ title: { type: String, default: '' } });
 }
 
 .logo-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 3rem;
-  height: 3rem;
+  display: block;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin: 0 auto 0.75rem;
+  object-fit: cover;
   border: 2px solid var(--gold);
-  border-radius: 50%;
-  color: var(--red);
-  background: var(--gold-soft);
-  font-weight: bold;
-  margin-bottom: 0.75rem;
+  border-radius: 0.6rem;
 }
 
 h1 {
