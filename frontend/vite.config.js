@@ -7,6 +7,10 @@ export default defineConfig({
     vue(),
     VitePWA({
       registerType: 'autoUpdate',
+      // false : on enregistre le Service Worker nous-mêmes dans main.js (virtual:pwa-register,
+      // immediate: true) pour forcer le rechargement automatique des onglets ouverts dès qu'une
+      // nouvelle version est déployée. L'injection automatique par défaut ne le fait pas.
+      injectRegister: false,
       includeAssets: ['qr-code.png', 'catalogue-cookafrica.pdf'],
       manifest: {
         id: '/',
@@ -30,11 +34,15 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest}'],
         runtimeCaching: [
           {
+            // StaleWhileRevalidate (et non CacheFirst) : sert la version en cache instantanément
+            // pour la rapidité, mais revérifie le réseau en arrière-plan et met à jour le cache —
+            // sinon, remplacer une image plus tard en gardant le même nom de fichier (ex.
+            // LUNDI.jpg) la laisserait figée jusqu'à un an pour les visiteurs déjà passés.
             urlPattern: /\/assets\/pages\/.*\.jpg$/,
-            handler: 'CacheFirst',
+            handler: 'StaleWhileRevalidate',
             options: {
               cacheName: 'catalogue-pages',
-              expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 365 }
+              expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 30 }
             }
           },
           {
