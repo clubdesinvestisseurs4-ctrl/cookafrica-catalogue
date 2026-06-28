@@ -119,8 +119,12 @@ onBeforeUnmount(() => {
 }
 
 .flipbook {
-  width: min(98vw, 1200px);
-  height: min(88vh, 1750px);
+  /* Les pages font 853x1280 (ratio ≈ 0.666). St.PageFlip conserve ce ratio et centre le livre
+     dans sa boîte : si la boîte n'a pas exactement ce ratio, ça laisse de grands espaces vides
+     autour. Les deux formules ci-dessous sont calculées pour que largeur et hauteur restent
+     toujours proportionnelles à 853:1280, quelle que soit la forme de l'écran. */
+  width: min(98vw, 58.64vh, 1166px);
+  height: min(88vh, 147.06vw, 1750px);
 }
 
 .page {
@@ -208,7 +212,10 @@ onBeforeUnmount(() => {
 .nav-btn:active { transform: scale(0.95); }
 
 @media (max-width: 640px) {
-  .flipbook { height: min(85vh, 1500px); }
+  .flipbook {
+    width: min(98vw, 56.64vh);
+    height: min(85vh, 147.06vw, 1500px);
+  }
   /* Cible tactile >= 44px (recommandation accessibilité mobile), un peu plus grande que la
      simple icône pour rester facile à toucher du pouce. */
   .nav-btn { width: 2.75rem; height: 2.75rem; font-size: 1.3rem; }
