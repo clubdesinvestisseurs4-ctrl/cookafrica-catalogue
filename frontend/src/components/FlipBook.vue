@@ -60,13 +60,13 @@ async function init() {
   if (!bookEl.value || !props.pages.length) return;
 
   pageFlip = new PageFlip(bookEl.value, {
-    width: 480,
-    height: 720,
+    width: 520,
+    height: 780,
     size: 'stretch',
     minWidth: 260,
-    maxWidth: 1100,
+    maxWidth: 1300,
     minHeight: 380,
-    maxHeight: 1600,
+    maxHeight: 1850,
     maxShadowOpacity: 0.55,
     showCover: true,
     usePortrait: true,
@@ -114,13 +114,13 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(0.5rem, 2vh, 1.5rem) clamp(0.5rem, 3vw, 2rem);
+  padding: clamp(0.25rem, 1vh, 0.75rem) clamp(0.25rem, 1.5vw, 1rem);
   min-height: 0;
 }
 
 .flipbook {
-  width: min(94vw, 1000px);
-  height: min(78vh, 1500px);
+  width: min(98vw, 1200px);
+  height: min(88vh, 1750px);
 }
 
 .page {
@@ -208,7 +208,7 @@ onBeforeUnmount(() => {
 .nav-btn:active { transform: scale(0.95); }
 
 @media (max-width: 640px) {
-  .flipbook { height: min(72vh, 1500px); }
+  .flipbook { height: min(85vh, 1500px); }
   /* Cible tactile >= 44px (recommandation accessibilité mobile), un peu plus grande que la
      simple icône pour rester facile à toucher du pouce. */
   .nav-btn { width: 2.75rem; height: 2.75rem; font-size: 1.3rem; }

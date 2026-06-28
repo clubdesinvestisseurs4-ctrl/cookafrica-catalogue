@@ -1,7 +1,7 @@
 <template>
   <header class="toolbar">
     <div class="brand">
-      <span class="brand-mark">CA</span>
+      <img class="brand-mark" src="/assets/logo-cookafrica.jpeg" alt="Cook Africa" />
       <div class="brand-text">
         <strong>Cook Africa</strong>
         <small>{{ currentDayLabel || 'Le Catalogue' }}</small>
@@ -60,16 +60,13 @@ function toggleFullscreen() {
 .brand { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
 
 .brand-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  display: block;
+  width: 2.3rem;
+  height: 2.3rem;
+  flex-shrink: 0;
+  object-fit: cover;
   border: 1.5px solid var(--gold);
-  border-radius: 50%;
-  color: var(--gold);
-  font-weight: bold;
-  font-size: 0.85rem;
+  border-radius: 0.45rem;
 }
 
 .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
