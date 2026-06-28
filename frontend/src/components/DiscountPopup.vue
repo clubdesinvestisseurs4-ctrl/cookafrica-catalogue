@@ -64,6 +64,11 @@ function close() {
   padding: 1rem;
 }
 
+.modal-pop-enter-active, .modal-pop-leave-active { transition: opacity 0.25s ease; }
+.modal-pop-enter-active .card, .modal-pop-leave-active .card { transition: transform 0.25s ease, opacity 0.25s ease; }
+.modal-pop-enter-from, .modal-pop-leave-to { opacity: 0; }
+.modal-pop-enter-from .card, .modal-pop-leave-to .card { transform: translateY(16px) scale(0.95); opacity: 0; }
+
 .card {
   position: relative;
   background: var(--cream);
@@ -81,14 +86,18 @@ function close() {
 
 .close-x {
   position: absolute;
-  top: 0.5rem;
-  right: 0.6rem;
+  top: 0.4rem;
+  right: 0.5rem;
+  width: 2.2rem;
+  height: 2.2rem;
   background: none;
   border: none;
   font-size: 1.1rem;
   color: var(--red-dark);
   line-height: 1;
+  transition: transform 0.1s;
 }
+.close-x:active { transform: scale(0.92); }
 
 .badge { font-size: 2rem; display: block; }
 
@@ -108,6 +117,7 @@ h2 { margin: 0.35rem 0 0.4rem; font-size: 1.2rem; color: var(--red-dark); }
 .cta {
   display: block;
   width: 100%;
+  min-height: 44px;
   background: var(--red);
   color: var(--gold-soft);
   border: 1px solid var(--gold);
@@ -116,9 +126,11 @@ h2 { margin: 0.35rem 0 0.4rem; font-size: 1.2rem; color: var(--red-dark); }
   font-weight: bold;
   font-size: 0.95rem;
   margin-bottom: 0.6rem;
+  transition: background 0.2s, transform 0.1s;
 }
 .cta:hover { background: var(--red-dark); }
 .cta:disabled { opacity: 0.6; }
+.cta:not(:disabled):active { transform: scale(0.97); }
 
 .ghost {
   display: block;

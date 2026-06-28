@@ -67,7 +67,10 @@ function logout() {
   border-radius: 999px;
   padding: 0.4rem 0.8rem;
   font-size: 0.8rem;
+  min-height: 36px;
+  transition: background 0.2s, transform 0.1s;
 }
+.logout:active { transform: scale(0.96); }
 
 .content {
   flex: 1;
@@ -87,5 +90,11 @@ function logout() {
   border-radius: 0.85rem;
   overflow: hidden;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  animation: form-frame-in 0.35s ease-out;
+}
+
+@keyframes form-frame-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 </style>

@@ -38,8 +38,10 @@
         </span>
       </label>
 
-      <p v-if="errorMessage" class="msg error">{{ errorMessage }}</p>
-      <p v-if="success" class="msg success">✓ Merci, votre fiche a été enregistrée !</p>
+      <Transition name="pop" mode="out-in">
+        <p v-if="errorMessage" key="error" class="msg error">{{ errorMessage }}</p>
+        <p v-else-if="success" key="success" class="msg success">✓ Merci, votre fiche a été enregistrée !</p>
+      </Transition>
 
       <button class="submit-btn" type="submit" :disabled="submitting">
         {{ submitting ? 'Envoi…' : 'Envoyer' }}
@@ -147,6 +149,11 @@ async function submit() {
   border-radius: 0.6rem;
   overflow: hidden;
   background: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.field:focus-within {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25);
 }
 
 .field-icon {
@@ -175,29 +182,37 @@ async function submit() {
 .field-body input {
   border: none;
   outline: none;
-  font-size: 0.95rem;
+  /* 16px minimum : sous ce seuil, Safari iOS zoome automatiquement la page au focus du champ. */
+  font-size: 1rem;
   font-family: inherit;
   background: transparent;
-  padding: 0.1rem 0;
+  padding: 0.15rem 0;
   color: var(--ink);
 }
 
-.msg { margin: 0; font-size: 0.85rem; text-align: center; }
+.msg { margin: 0; font-size: 0.9rem; text-align: center; }
 .msg.error { color: #9b1c1c; }
 .msg.success { color: #1f7a3a; font-weight: bold; }
 
+.pop-enter-active, .pop-leave-active { transition: opacity 0.2s, transform 0.2s; }
+.pop-enter-from { opacity: 0; transform: translateY(-4px) scale(0.96); }
+.pop-leave-to { opacity: 0; transform: translateY(4px) scale(0.96); }
+
 .submit-btn {
   margin-top: 0.25rem;
+  min-height: 44px;
   background: var(--red);
   color: var(--gold-soft);
   border: 1px solid var(--gold);
   border-radius: 999px;
   padding: 0.7rem 1rem;
   font-weight: bold;
-  font-size: 0.95rem;
+  font-size: 1rem;
+  transition: background 0.2s, transform 0.1s;
 }
 .submit-btn:disabled { opacity: 0.6; }
 .submit-btn:not(:disabled):hover { background: var(--red-dark); }
+.submit-btn:not(:disabled):active { transform: scale(0.97); }
 
 .fiche-footer {
   background: var(--red);

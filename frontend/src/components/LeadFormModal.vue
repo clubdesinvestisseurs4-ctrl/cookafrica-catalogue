@@ -28,6 +28,11 @@ function close() {
   padding: 1rem;
 }
 
+.modal-pop-enter-active, .modal-pop-leave-active { transition: opacity 0.25s ease; }
+.modal-pop-enter-active .card, .modal-pop-leave-active .card { transition: transform 0.25s ease, opacity 0.25s ease; }
+.modal-pop-enter-from, .modal-pop-leave-to { opacity: 0; }
+.modal-pop-enter-from .card, .modal-pop-leave-to .card { transform: translateY(16px) scale(0.95); opacity: 0; }
+
 .card {
   position: relative;
   width: 100%;
@@ -43,13 +48,15 @@ function close() {
   top: 0.5rem;
   right: 0.6rem;
   z-index: 1;
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(0, 0, 0, 0.35);
   border: none;
   border-radius: 50%;
-  width: 1.8rem;
-  height: 1.8rem;
+  width: 2.2rem;
+  height: 2.2rem;
   font-size: 1rem;
   color: #fff;
   line-height: 1;
+  transition: transform 0.1s;
 }
+.close-x:active { transform: scale(0.92); }
 </style>

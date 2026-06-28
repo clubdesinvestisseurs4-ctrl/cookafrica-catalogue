@@ -48,19 +48,28 @@ async function submit() {
 .f input {
   border: 1.5px solid var(--red);
   border-radius: 0.5rem;
-  padding: 0.55rem 0.7rem;
-  font-size: 0.95rem;
+  padding: 0.6rem 0.7rem;
+  font-size: 1rem;
   font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.f input:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25);
 }
 .error { color: #9b1c1c; font-size: 0.85rem; margin: 0; }
 .submit {
+  min-height: 44px;
   background: var(--red);
   color: var(--gold-soft);
   border: 1px solid var(--gold);
   border-radius: 999px;
   padding: 0.65rem 1rem;
   font-weight: bold;
+  transition: background 0.2s, transform 0.1s;
 }
 .submit:disabled { opacity: 0.6; }
 .submit:not(:disabled):hover { background: var(--red-dark); }
+.submit:not(:disabled):active { transform: scale(0.97); }
 </style>

@@ -52,23 +52,23 @@ VITE_API_URL=http://localhost:8080
 
 ## 2. Mettre à jour les images du menu
 
-Les images sources (exports Photoshop) vivent hors du dépôt, dans `C:\Users\abayi\MENU\`. La
-correspondance fichier → page est définie dans `frontend/scripts/image-map.mjs`.
+Les images sont déjà au format final (web), à déposer directement dans le dépôt — il n'y a plus
+de dossier source externe à traiter.
 
-1. Exportez/remplacez le(s) JPG dans `C:\Users\abayi\MENU\<JOUR>\...` (ou changez le chemin dans
-   `image-map.mjs` si vous renommez un fichier).
-2. Régénérez les pages optimisées, les icônes et le PDF :
+1. Déposez le(s) JPG dans `frontend/public/assets/pages/` (n'importe quel nom de fichier).
+2. Mettez à jour l'ordre/les pages dans `frontend/src/data/catalog.js` : chaque entrée de
+   `catalog.pages` a un `image` (nom du fichier dans `assets/pages/`), un `kind`
+   (`cover-start` / `day-cover` / `cover-end`) et un `alt` pour l'accessibilité. C'est ce fichier
+   qui fait foi pour l'ordre des pages — à la fois à l'écran et dans le PDF généré.
+3. Régénérez le PDF téléchargeable (et les icônes si le logo a changé) :
    ```bash
    cd frontend
    npm run prep
    ```
-   > ⚠️ Ces scripts lisent les fichiers sources depuis `C:\Users\abayi\MENU\` (votre machine). Ils
-   > ne sont **pas** exécutés automatiquement au build (ni Vercel ni Render/Cloud Run n'ont accès à
-   > ce dossier) — c'est pour ça qu'il faut les lancer en local puis committer les fichiers générés
-   > (`public/assets/pages/`, `public/icons/`, `public/catalogue-cookafrica.pdf`).
-3. Si le texte des plats a changé, mettez aussi à jour `frontend/src/data/catalog.js`
-   (et, si le backend est en service, republiez via `npm run seed` côté backend — voir §3.4).
-4. Commitez **et ajoutez les fichiers générés** (`git add public/`), puis poussez : Vercel
+4. Si le backend est en service et que vous voulez que le menu soit aussi à jour via l'API
+   (sans redéployer le frontend), republiez vers Firestore : `cd backend && npm run seed`
+   (voir §3.4).
+5. Commitez **et ajoutez les fichiers générés** (`git add public/`), puis poussez : Vercel
    redéploie automatiquement (§4).
 
 ---

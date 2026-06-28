@@ -31,6 +31,12 @@ defineProps({ title: { type: String, default: '' } });
   max-width: 360px;
   text-align: center;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  animation: auth-card-in 0.35s ease-out;
+}
+
+@keyframes auth-card-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .logo-mark {

@@ -20,13 +20,17 @@
       <div v-else class="loading">Chargement du catalogue…</div>
     </main>
 
-    <DiscountPopup
-      v-if="showDiscount"
-      :address="contact.addressShort"
-      :phones="contact.phones"
-      @close="closeDiscount"
-    />
-    <LeadFormModal v-if="showLeadForm" @close="showLeadForm = false" />
+    <Transition name="modal-pop">
+      <DiscountPopup
+        v-if="showDiscount"
+        :address="contact.addressShort"
+        :phones="contact.phones"
+        @close="closeDiscount"
+      />
+    </Transition>
+    <Transition name="modal-pop">
+      <LeadFormModal v-if="showLeadForm" @close="showLeadForm = false" />
+    </Transition>
   </div>
 </template>
 
