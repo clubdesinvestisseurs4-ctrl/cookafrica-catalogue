@@ -122,7 +122,7 @@ export function drawCoupon(canvas, { offerText, validUntilLabel, code, address, 
   ctx.fillText('— LE restaurant qui rassemble —', W / 2, H - 160);
   ctx.font = '24px Georgia, "Times New Roman", serif';
   ctx.fillStyle = CREAM;
-  ctx.fillText(address || 'Angré 8ème tranche, KFC, derrière la station Shell', W / 2, H - 115);
+  ctx.fillText(address || 'Cocody 2 Plateaux Vallon, Rue des Jardins, Résidence Ohinéne', W / 2, H - 115);
   ctx.fillText((phones || []).join('  —  '), W / 2, H - 80);
 }
 

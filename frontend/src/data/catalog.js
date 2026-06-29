@@ -8,7 +8,7 @@ export const catalog = {
     {
       id: 'cover-debut',
       kind: 'cover-start',
-      image: 'couverture-debut.jpg',
+      image: 'couverture-debut.jpeg',
       alt: 'Couverture du catalogue Cook Africa : Le Menu, découvrez les richesses culinaires.'
     },
     {
@@ -62,13 +62,13 @@ export const catalog = {
     {
       id: 'cover-fin',
       kind: 'cover-end',
-      image: 'couverture-fin.jpg',
-      alt: 'Occasions Cook Africa : dot, mariage, anniversaires, repas en famille et entre amis — adresses et contacts.'
+      image: 'couverture-fin.jpeg',
+      alt: 'Cook Africa vous dit merci et à bientôt — adresse et contacts du restaurant.'
     }
   ],
 
   contact: {
-    addressShort: 'Angré 8ème tranche, KFC, derrière la station Shell',
+    addressShort: 'Cocody 2 Plateaux Vallon, Rue des Jardins, Résidence Ohinéne',
     phones: ['05 84 37 79 80', '01 51 45 91 34'],
     site: 'www.cookafricavip.com'
   }
