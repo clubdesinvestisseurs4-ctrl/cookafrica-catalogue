@@ -26,14 +26,26 @@
     </div>
 
     <div class="nav-arrows">
-      <button class="nav-btn prev" @click="prev" aria-label="Page précédente">‹</button>
-      <button class="nav-btn next" @click="next" aria-label="Page suivante">›</button>
+      <button
+        class="nav-btn prev"
+        :class="{ 'is-hidden': isFirst }"
+        :disabled="isFirst"
+        @click="prev"
+        aria-label="Page précédente"
+      >‹</button>
+      <button
+        class="nav-btn next"
+        :class="{ 'is-hidden': isLast }"
+        :disabled="isLast"
+        @click="next"
+        aria-label="Page suivante"
+      >›</button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, nextTick, watch } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, nextTick, watch } from 'vue';
 import { PageFlip } from 'page-flip';
 import { resolveImage } from '../composables/useCatalog.js';
 
@@ -45,6 +57,9 @@ const emit = defineEmits(['ready', 'flip', 'open-lead-form']);
 const wrapEl = ref(null);
 const bookEl = ref(null);
 const bookStyle = ref({});
+const currentIndex = ref(0);
+const isFirst = computed(() => currentIndex.value <= 0);
+const isLast = computed(() => currentIndex.value >= props.pages.length - 1);
 let pageFlip = null;
 let resizeObserver = null;
 
@@ -124,7 +139,11 @@ async function init() {
   });
 
   pageFlip.loadFromHTML(bookEl.value.querySelectorAll('.page'));
-  pageFlip.on('flip', (e) => emit('flip', e.data));
+  currentIndex.value = pageFlip.getCurrentPageIndex();
+  pageFlip.on('flip', (e) => {
+    currentIndex.value = e.data;
+    emit('flip', e.data);
+  });
   emit('ready', pageFlip);
 }
 
@@ -258,11 +277,16 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(2px);
-  transition: background 0.2s, transform 0.15s;
+  transition: background 0.2s, transform 0.15s, opacity 0.2s;
 }
 
 .nav-btn:hover { background: rgba(122, 14, 14, 0.85); transform: scale(1.06); }
 .nav-btn:active { transform: scale(0.95); }
+
+.nav-btn.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
 
 @media (max-width: 640px) {
   /* Cible tactile >= 44px (recommandation accessibilité mobile), un peu plus grande que la
