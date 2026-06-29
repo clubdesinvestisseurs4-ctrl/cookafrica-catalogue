@@ -36,6 +36,14 @@ export const catalog = {
       alt: 'Menu du jour — spécialités Krobou, Ébrié, Adjoukrou'
     },
     {
+      id: 'jeudi',
+      kind: 'day-cover',
+      dayLabel: 'Jeudi',
+      theme: 'Wê, Dan',
+      image: 'JEUDI.jpeg',
+      alt: 'Menu du jour — spécialités Wê et Dan'
+    },
+    {
       id: 'vendredi',
       kind: 'day-cover',
       dayLabel: 'Vendredi',
