@@ -12,6 +12,11 @@ const couponsRouter = require('./routes/coupons');
 const app = express();
 const PORT = process.env.PORT || 8080;
 
+// Render et Cloud Run terminent TLS via un seul reverse-proxy : on ne fait confiance
+// qu'à ce premier hop pour X-Forwarded-For, sinon express-rate-limit voit l'IP du proxy
+// pour toutes les requêtes (un seul abus bloquerait tout le monde).
+app.set('trust proxy', 1);
+
 const allowedOrigins = (process.env.CORS_ORIGINS || '*')
   .split(',')
   .map((o) => o.trim())

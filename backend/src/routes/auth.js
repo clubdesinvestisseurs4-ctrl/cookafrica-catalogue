@@ -1,9 +1,22 @@
 const express = require('express');
+const crypto = require('node:crypto');
 const bcrypt = require('bcryptjs');
 const { db } = require('../firebase-admin');
 const { signToken } = require('../lib/auth');
 
 const router = express.Router();
+
+// Compare deux mots de passe en temps constant (même si leurs longueurs diffèrent),
+// pour éviter qu'une attaque par timing ne révèle des informations sur ADMIN_PASSWORD.
+function passwordsMatch(a, b) {
+  const bufA = Buffer.from(a);
+  const bufB = Buffer.from(b);
+  if (bufA.length !== bufB.length) {
+    crypto.timingSafeEqual(bufA, bufA);
+    return false;
+  }
+  return crypto.timingSafeEqual(bufA, bufB);
+}
 
 // POST /api/auth/admin/login — { password } -> { token }
 router.post('/admin/login', async (req, res) => {
@@ -11,7 +24,7 @@ router.post('/admin/login', async (req, res) => {
   if (!process.env.ADMIN_PASSWORD) {
     return res.status(500).json({ error: 'ADMIN_PASSWORD non configuré côté serveur.' });
   }
-  if (!password || password !== process.env.ADMIN_PASSWORD) {
+  if (!password || typeof password !== 'string' || !passwordsMatch(password, process.env.ADMIN_PASSWORD)) {
     return res.status(401).json({ error: 'Mot de passe incorrect.' });
   }
   const token = signToken({ role: 'admin' }, '12h');
